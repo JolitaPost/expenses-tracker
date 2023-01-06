@@ -16,6 +16,21 @@ const mysqlConfig = {
 };
 
 const connection = mysql.createConnection(mysqlConfig);
+/*
+app.get('/expenses/:id', (req, res) => {  //1 budas. Tada postmane tikrinam: localhost:3000/expenses/1
+    const { id } = req.params;
+    connection.execute('SELECT * FROM expenses WHERE userid=?', [id], (err, expenses) => {
+        res.send(expenses);
+    });
+});
+*/
 
-const PORT = 3000;
+app.get('/expenses', (req, res) => {  //2 budas. Tada postmane tikrinam: localhost:3000/expenses?userId=1
+    const { userId } = req.query;
+    connection.execute('SELECT * FROM expenses WHERE userid=?', [userId], (err, expenses) => {
+        res.send(expenses);
+    });
+});
+
+const PORT = 8080;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
