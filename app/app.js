@@ -34,5 +34,21 @@ app.get('/expenses', (req, res) => {  //2 budas. Tada postmane tikrinam: localho
     });
 });
 
+app.post('/expenses', (req, res) => {
+    const { type, amount, userId } = req.body;
+
+    connection.execute(
+        'INSERT INTO expenses (type, amount, userId) VALUES (?, ?, ?)',
+        [type, amount, userId],
+        (err, result) => {
+            connection.execute('SELECT * FROM expenses WHERE userId=?',
+            [userId],
+            (err, expenses) => {
+                res.send(expenses);
+            })
+        }
+    )
+});
+
 const PORT = 8080;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
