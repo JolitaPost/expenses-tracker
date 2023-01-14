@@ -2,6 +2,8 @@ import { stripBasename } from "@remix-run/router";
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from 'styled-components';
+import { Input } from "../../components/Input/Input";
+import { Button } from "../../components/Button/Button"; 
 import { LOGGED_IN_USER } from "../../constants/constants";
 
 const ExpensesList = styled.ul`
@@ -78,19 +80,19 @@ export const Expenses = () => {
     return (
         <ExpensesList>
             <form onSubmit={handleExpenseAdd}>
-                <input placeholder="type"
+                <Input placeholder="Type"
                 required
                 onChange={(e) => setType(e.target.value)}
                 value={type}
                 />
-                <input
-                placeholder="amlount"
+                <Input
+                placeholder="Amount"
                 type="number"
                 reguired
                 onChange={(e) => setAmount(e.target.value)}
                 value={amount}
                 />
-                <button>Add</button>
+                <Button>Add</Button>
             </form>
             {expenses.map((expense) => (
                 <ExpensesListItem key={expense.id}>
