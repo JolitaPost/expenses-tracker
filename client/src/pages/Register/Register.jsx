@@ -27,11 +27,11 @@ export const Register = () => {
         <>
             <form onSubmit={handleRegister}>
             <Input 
-                placeholder="Name"
+                placeholder="Name" required
                 onChange={(e) => setName(e.target.value)}
                 value={name}
             />
-            <Input placeholder="Password"
+            <Input placeholder="Password" required
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
