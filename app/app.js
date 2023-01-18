@@ -19,18 +19,17 @@ const mysqlConfig = {
 };
 
 const connection = mysql.createConnection(mysqlConfig);
-/*
-app.get('/expenses/:id', (req, res) => {  //1 budas. Tada postmane tikrinam: localhost:3000/expenses/1
-    const { id } = req.params;
-    connection.execute('SELECT * FROM expenses WHERE userid=?', [id], (err, expenses) => {
-        res.send(expenses);
-    });
-});
-*/
 
-app.get('/expenses', (req, res) => {  //2 budas. Tada postmane tikrinam: localhost:3000/expenses?userId=1
+// app.get('/expenses/:userId', (req, res) => {
+//     const { userId } = req.params;
+//     connection.execute('SELECT * FROM expenses WHERE userId=?', [userId], (err, expenses) => {
+//         res.send(expenses);
+//     });
+// });
+
+app.get('/expenses', (req, res) => {
     const { userId } = req.query;
-    connection.execute('SELECT * FROM expenses WHERE userid=?', [userId], (err, expenses) => {
+    connection.execute('SELECT * FROM expenses WHERE userId=?', [userId], (err, expenses) => {
         res.send(expenses);
     });
 });
@@ -41,12 +40,14 @@ app.post('/expenses', (req, res) => {
     connection.execute(
         'INSERT INTO expenses (type, amount, userId) VALUES (?, ?, ?)',
         [type, amount, userId],
-        (err, result) => {
-            connection.execute('SELECT * FROM expenses WHERE userId=?',
-            [userId],
-            (err, expenses) => {
-                res.send(expenses);
-            })
+        () => {
+            connection.execute(
+                'SELECT * FROM expenses WHERE userId=?', 
+                [userId], 
+                (err, expenses) => {
+                    res.send(expenses);
+                }
+            )
         }
     )
 });
@@ -56,11 +57,14 @@ app.post('/register', (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 12);
 
     connection.execute(
-        'INSERT INTO users (name, password) VALUES (?, ?)',
+        'INSERT INTO users (name, password) VALUES (?, ?)', 
         [name, hashedPassword],
         (err, result) => {
-                console.log(err);
-                res.send(result);
+            if (err?.code === 'ER_DUP_ENTRY') {
+                res.sendStatus(400);
+            }
+            
+            res.send(result);
         }
     )
 });
@@ -73,22 +77,19 @@ app.post('/login', (req, res) => {
         [name],
         (err, result) => {
             if (result.length === 0) {
-                res.status(401);
-                res.send('Incorrect user name or password');
+                res.sendStatus(401);
             } else {
                 const passwordHash = result[0].password
-                const isPassworCorrect = bcrypt.compareSync(password, passwordHash);
-                if (isPassworCorrect) {
+                const isPasswordCorrect = bcrypt.compareSync(password, passwordHash);
+                if (isPasswordCorrect) {
                     res.send(result[0]);
                 } else {
-                    res.status(401);
-                    res.send('Incorrect user name or password'); 
+                    res.sendStatus(401);
                 }
             }
-            
         }
-    )
-})
+    );
+});
 
 const PORT = 8080;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

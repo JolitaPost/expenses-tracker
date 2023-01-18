@@ -1,6 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom"
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContextWrapper.jsx";
 
-export const PageLayout = ({ user }) => {
+export const PageLayout = () => {
+    const { user } = useContext(UserContext);
+
     if (!user) {
         return <Navigate to="/login" />
     }
