@@ -45,7 +45,7 @@ app.get('/expenses', verifyToken, (req, res) => {
     });
 });
 
-app.post('/expenses', (req, res) => {
+app.post('/expenses', verifyToken, (req, res) => {
     const { type, amount, userId } = req.body;
 
     connection.execute(
@@ -94,7 +94,7 @@ app.post('/login', (req, res) => {
                 const isPasswordCorrect = bcrypt.compareSync(password, passwordHash);
                 if (isPasswordCorrect) {
                     const { id, name } = result[0];
-                    const token = jwt.sign({ id, name }, process.env.JWT_SECRET_KEY, { expiresIn: '5s' });
+                    const token = jwt.sign({ id, name }, process.env.JWT_SECRET_KEY);
                     res.send({ token, id, name });
                 } else {
                     res.sendStatus(401);
@@ -102,6 +102,16 @@ app.post('/login', (req, res) => {
             }
         }
     );
+});
+
+app.get('/token/verify', (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const user = jwt.verify(token, procces.env.JWT_SECRET_KEY);
+        res.send(user);
+    } catch(e) {
+        res.send({ error: 'Invalid Token'})
+    }
 });
 
 const PORT = 8080;
