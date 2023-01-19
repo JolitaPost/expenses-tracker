@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { Input } from "../../components/Input/Input";
+import { LOCAL_STORAGE_JWT_TOKEN_KEY } from "../../constants/constants";
 import { UserContext } from "../../contexts/UserContextWrapper";
 
 const LoginContainer = styled.div`
@@ -62,9 +63,11 @@ export const Login = () => {
             return res.json();
         })
         .then((data) => {
+            const { id, name, token } = data;
+            localStorage.setItem(LOCAL_STORAGE_JWT_TOKEN_KEY, token);
             setUser(data);
             setIsLoading(false);
-            setError('');
+            setError({ id, name });
             navigate('/');
         })
         .catch((e) => {

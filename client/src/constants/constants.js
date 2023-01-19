@@ -1,3 +1,1 @@
-export const LOGGED_IN_USER = {
-    id: 1
-}
+export const LOCAL_STORAGE_JWT_TOKEN_KEY = 'JWT_TOKEN';
